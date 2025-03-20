@@ -1,6 +1,7 @@
 package com.senac.CadastroClienteSenac.Entity;
 
 import java.time.LocalDate;
+import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
@@ -25,10 +26,11 @@ public class Cliente {
     private int idade;
     private int ddd;
     private int telefone;
-
     private String sexo;
-
     private LocalDate dataNascimento;
+
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Endereco> enderecos;
 
     public Long getId() {
         return id;
@@ -36,6 +38,14 @@ public class Cliente {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Endereco> getEnderecos() {
+        return enderecos;
+    }
+
+    public void setEnderecos(List<Endereco> enderecos) {
+        this.enderecos = enderecos;
     }
 
     public String getDocumento() {
@@ -78,22 +88,6 @@ public class Cliente {
         this.idade = idade;
     }
 
-    public String getSexo() {
-        return sexo;
-    }
-
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
-    }
-
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
-
     public int getDdd() {
         return ddd;
     }
@@ -108,5 +102,21 @@ public class Cliente {
 
     public void setTelefone(int telefone) {
         this.telefone = telefone;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 }

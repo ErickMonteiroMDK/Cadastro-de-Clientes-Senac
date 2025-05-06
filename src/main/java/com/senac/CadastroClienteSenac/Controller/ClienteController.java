@@ -2,6 +2,8 @@ package com.senac.CadastroClienteSenac.Controller;
 
 import com.senac.CadastroClienteSenac.Entity.Cliente;
 import com.senac.CadastroClienteSenac.Service.ClienteService;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,9 +11,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/clientes")
+@AllArgsConstructor
 public class ClienteController {
 
-    @Autowired
     private ClienteService service;
 
     @GetMapping("/listar")
@@ -20,7 +22,7 @@ public class ClienteController {
     }
 
     @PostMapping("/criar")
-    public Cliente criar(@RequestBody Cliente cliente) {
+    public Cliente criar(@Valid @RequestBody Cliente cliente) {
         return service.criar(cliente);
     }
 

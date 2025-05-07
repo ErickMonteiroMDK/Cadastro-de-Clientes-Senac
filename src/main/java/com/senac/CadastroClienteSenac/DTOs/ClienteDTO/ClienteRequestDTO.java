@@ -1,23 +1,37 @@
 package com.senac.CadastroClienteSenac.DTOs.ClienteDTO;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import com.senac.CadastroClienteSenac.Enum.Genero;
+import jakarta.validation.constraints.*;
 import lombok.Data;
+
+import java.time.LocalDate;
 
 @Data
 public class ClienteRequestDTO {
 
-    @NotBlank(message = "O nome é obrigatório na requisição")
-    @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
+    @Size(min = 3, message = "O nome para busca deve ter pelo menos 3 caracteres.")
     private String nome;
 
-    @NotBlank(message = "O email é obrigatório na requisição")
-    @Email(message = "Formato de email inválido")
+    @Size(min = 11, max = 14, message = "O documento deve ter entre 11 e 14 caracteres.")
+    private String documento;
+
+    @Email(message = "O e-mail deve ser válido.")
     private String email;
 
-    @Pattern(regexp = "\\d{10,11}", message = "O telefone deve conter 10 ou 11 dígitos")
-    private String telefone;
+    private Genero genero;
+
+    @PastOrPresent(message = "A data de nascimento deve estar no passado ou presente.")
+    private LocalDate dataNascimentoInicio;
+
+    @PastOrPresent(message = "A data de nascimento deve estar no passado ou presente.")
+    private LocalDate dataNascimentoFim;
+
+    @Min(value = 0, message = "Idade mínima inválida.")
+    @Max(value = 150, message = "Idade máxima inválida.")
+    private Integer idadeMinima;
+
+    @Min(value = 0, message = "Idade mínima inválida.")
+    @Max(value = 150, message = "Idade máxima inválida.")
+    private Integer idadeMaxima;
 
 }

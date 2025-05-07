@@ -10,7 +10,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @Entity(name = "endereco")
 public class Endereco {
 
@@ -52,4 +52,17 @@ public class Endereco {
     @JoinColumn(name = "cliente_id", nullable = false)
     @NotNull(message = "Cliente é obrigatório")
     private Cliente cliente;
+
+    @Builder
+    public Endereco(String logradouro, String bairro, String numero,
+                    String cidade, String estado, Integer cep, Cliente cliente) {
+        this.logradouro = logradouro;
+        this.bairro = bairro;
+        this.numero = numero;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.cep = cep;
+        this.cliente = cliente;
+    }
+
 }

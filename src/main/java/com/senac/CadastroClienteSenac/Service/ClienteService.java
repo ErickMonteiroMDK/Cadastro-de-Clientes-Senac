@@ -126,7 +126,7 @@ public class ClienteService {
                                         .numero(endereco.getNumero())
                                         .cidade(endereco.getCidade())
                                         .estado(endereco.getEstado())
-                                        .cep(endereco.getCep())
+                                        .cep(String.valueOf(endereco.getCep()))
                                         .clienteId(endereco.getCliente().getId())
                                         .build())
                                 .collect(Collectors.toList()) :

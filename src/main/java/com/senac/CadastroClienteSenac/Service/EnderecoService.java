@@ -18,12 +18,15 @@ public class EnderecoService {
 
 
     private static final int LIMITE_ENDERECOS = 3;
+    private final EnderecoRepository enderecoRepository;
+    private final ClienteRepository clienteRepository;
 
     @Autowired
-    private EnderecoRepository enderecoRepository;
+    public EnderecoService(EnderecoRepository enderecoRepository, ClienteRepository clienteRepository) {
+        this.enderecoRepository = enderecoRepository;
+        this.clienteRepository = clienteRepository;
+    }
 
-    @Autowired
-    private ClienteRepository clienteRepository;
 
     public List<EnderecoDTO> listarTodos() {
         return enderecoRepository.findAll()
@@ -98,36 +101,38 @@ public class EnderecoService {
     }
 
     private void atualizarDadosEndereco(Endereco endereco, EnderecoDTO dto) {
-        endereco.setLogradouro(dto.getLogradouro());
-        endereco.setBairro(dto.getBairro());
-        endereco.setNumero(dto.getNumero());
-        endereco.setCidade(dto.getCidade());
-        endereco.setEstado(dto.getEstado());
-        endereco.setCep(Integer.parseInt(dto.getCep()));
+        Optional.ofNullable(dto.getLogradouro()).ifPresent(endereco::setLogradouro);
+        Optional.ofNullable(dto.getBairro()).ifPresent(endereco::setBairro);
+        Optional.ofNullable(dto.getNumero()).ifPresent(endereco::setNumero);
+        Optional.ofNullable(dto.getCidade()).ifPresent(endereco::setCidade);
+        Optional.ofNullable(dto.getEstado()).ifPresent(endereco::setEstado);
+        Optional.ofNullable(dto.getCep())
+                .map(Integer::parseInt)
+                .ifPresent(endereco::setCep);
     }
 
     private EnderecoDTO converterParaDTO(Endereco endereco) {
-        EnderecoDTO dto = new EnderecoDTO();
-        dto.setId(endereco.getId());
-        dto.setLogradouro(endereco.getLogradouro());
-        dto.setBairro(endereco.getBairro());
-        dto.setNumero(endereco.getNumero());
-        dto.setCidade(endereco.getCidade());
-        dto.setEstado(endereco.getEstado());
-        dto.setCep(endereco.getCep());
-        dto.setClienteId(endereco.getCliente().getId());
-        return dto;
+        return EnderecoDTO.builder()
+                .id(endereco.getId())
+                .logradouro(endereco.getLogradouro())
+                .bairro(endereco.getBairro())
+                .numero(endereco.getNumero())
+                .cidade(endereco.getCidade())
+                .estado(endereco.getEstado())
+                .cep(String.valueOf(endereco.getCep()))
+                .clienteId(endereco.getCliente().getId())
+                .build();
     }
 
     private Endereco converterParaEntidade(EnderecoDTO dto, Cliente cliente) {
-        Endereco endereco = new Endereco();
-        endereco.setLogradouro(dto.getLogradouro());
-        endereco.setBairro(dto.getBairro());
-        endereco.setNumero(dto.getNumero());
-        endereco.setCidade(dto.getCidade());
-        endereco.setEstado(dto.getEstado());
-        endereco.setCep(Integer.parseInt(dto.getCep()));
-        endereco.setCliente(cliente);
-        return endereco;
+        return Endereco.builder()
+                .logradouro(dto.getLogradouro())
+                .bairro(dto.getBairro())
+                .numero(dto.getNumero())
+                .cidade(dto.getCidade())
+                .estado(dto.getEstado())
+                .cep(Integer.parseInt(dto.getCep()))
+                .cliente(cliente)
+                .build();
     }
 }

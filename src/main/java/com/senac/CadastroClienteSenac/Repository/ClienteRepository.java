@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface ClienteRepository extends JpaRepository <Cliente, Long>{
 
+    boolean existsByEmail(String email);
+
     @Query("SELECT c FROM Cliente c WHERE " +
             "(:nome IS NULL OR LOWER(c.nome) LIKE LOWER(CONCAT('%', :nome, '%'))) AND " +
             "(:documento IS NULL OR c.documento = :documento) AND " +

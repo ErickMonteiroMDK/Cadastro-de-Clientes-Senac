@@ -1,6 +1,6 @@
 package com.senac.CadastroClienteSenac.DTOs.ClienteDTO;
 
-import com.senac.CadastroClienteSenac.DTOs.EnderecoDTO.EnderecoResponseDTO;
+import com.senac.CadastroClienteSenac.DTOs.EnderecoDTO.EnderecoDTO;
 import com.senac.CadastroClienteSenac.Enum.Genero;
 import lombok.Builder;
 import lombok.Data;
@@ -22,5 +22,5 @@ public class ClienteResponseDTO {
     private Genero genero;
     private LocalDate dataNascimento;
     private Integer idade;
-    private List<EnderecoResponseDTO> enderecos;
+    private List<EnderecoDTO> enderecos;
 }

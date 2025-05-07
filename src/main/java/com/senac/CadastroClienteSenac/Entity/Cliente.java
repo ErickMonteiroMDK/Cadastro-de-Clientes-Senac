@@ -7,6 +7,7 @@ import java.util.List;
 import com.senac.CadastroClienteSenac.Enum.Genero;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
@@ -52,6 +53,7 @@ public class Cliente {
     private LocalDate dataNascimento;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Size(max = 3, message = "Cliente não pode ter mais que 3 endereços")
     private List<Endereco> enderecos;
 
     //O metodo calcula a idade do cliente para retornar no JSON porém não salva no banco.

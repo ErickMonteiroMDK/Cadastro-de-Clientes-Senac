@@ -1,7 +1,7 @@
 package com.senac.CadastroClienteSenac.Service;
 
 import com.senac.CadastroClienteSenac.DTOs.ClienteDTO.*;
-import com.senac.CadastroClienteSenac.DTOs.EnderecoDTO.EnderecoResponseDTO;
+import com.senac.CadastroClienteSenac.DTOs.EnderecoDTO.EnderecoDTO;
 import com.senac.CadastroClienteSenac.Entity.Cliente;
 import com.senac.CadastroClienteSenac.Exeception.ClienteNotFoundException;
 import com.senac.CadastroClienteSenac.Repository.ClienteRepository;
@@ -37,6 +37,11 @@ public class ClienteService {
     //Criar Cliente
     @Transactional
     public ClienteResponseDTO criar(ClienteCriarDTO dto) {
+
+        if (repository.existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("Já existe um cliente com este email");
+        }
+
         Cliente cliente = Cliente.builder()
                 .documento(dto.getDocumento())
                 .nome(dto.getNome())
@@ -112,15 +117,23 @@ public class ClienteService {
                 .genero(cliente.getGenero())
                 .dataNascimento(cliente.getDataNascimento())
                 .idade(calcularIdade(cliente.getDataNascimento()))
-                .enderecos(cliente.getEnderecos() != null ? 
-                    cliente.getEnderecos().stream()
-                        .map(endereco -> EnderecoResponseDTO.builder()
-                            // Preencher campos do EnderecoResponseDTO
-                            .build())
-                        .collect(Collectors.toList()) : 
-                    null)
+                .enderecos(cliente.getEnderecos() != null ?
+                        cliente.getEnderecos().stream()
+                                .map(endereco -> EnderecoDTO.builder()
+                                        .id(endereco.getId())
+                                        .logradouro(endereco.getLogradouro())
+                                        .bairro(endereco.getBairro())
+                                        .numero(endereco.getNumero())
+                                        .cidade(endereco.getCidade())
+                                        .estado(endereco.getEstado())
+                                        .cep(endereco.getCep())
+                                        .clienteId(endereco.getCliente().getId())
+                                        .build())
+                                .collect(Collectors.toList()) :
+                        null)
                 .build();
     }
+
 
     private int calcularIdade(LocalDate dataNascimento) {
         return Period.between(dataNascimento, LocalDate.now()).getYears();

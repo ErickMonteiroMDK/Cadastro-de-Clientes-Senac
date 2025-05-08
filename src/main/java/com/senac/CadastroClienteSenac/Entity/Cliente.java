@@ -1,122 +1,65 @@
 package com.senac.CadastroClienteSenac.Entity;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
-import jakarta.persistence.*;
 
-@Entity
+import com.senac.CadastroClienteSenac.Enum.Genero;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Data;
+
+@Builder
+@Data
+@Entity(name = "cliente")
 public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull(message = "O documento não pode ser nulo.")
+    @Column(name = "documento", nullable = false, length = 100)
     private String documento;
 
-    @Column(nullable = false)
+    @NotNull(message = "O nome não pode ser nulo.")
+    @Column(name = "nome", nullable = false, length = 50)
     private String nome;
 
-    @Column(nullable = false)
+    @NotNull(message = "O sobrenome não pode ser nulo.")
+    @Column(name = "sobrenome", nullable = false, length = 100)
     private String sobrenome;
 
-    @Column(nullable = false)
+    @NotNull(message = "O e-mail não pode ser nulo.")
+    @Column(name = "email", nullable = false, length = 150)
     private String email;
 
-    private int idade;
+    @NotNull(message = "O DDD não pode ser nulo.")
+    @Column(name = "ddd", nullable = false)
     private int ddd;
+
+    @NotNull(message = "O telefone não pode ser nulo.")
+    @Column(name = "telefone", nullable = false)
     private int telefone;
-    private String sexo;
+
+    @NotNull(message = "O genero não pode ser nulo.")
+    @Column(name = "genero", nullable = false)
+    private Genero genero;
+
+    @NotNull(message = "A data de nascimento não pode ser nulo.")
+    @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Size(max = 3, message = "Cliente não pode ter mais que 3 endereços")
     private List<Endereco> enderecos;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<Endereco> getEnderecos() {
-        return enderecos;
-    }
-
-    public void setEnderecos(List<Endereco> enderecos) {
-        this.enderecos = enderecos;
-    }
-
-    public String getDocumento() {
-        return documento;
-    }
-
-    public void setDocumento(String documento) {
-        this.documento = documento;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSobrenome() {
-        return sobrenome;
-    }
-
-    public void setSobrenome(String sobrenome) {
-        this.sobrenome = sobrenome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    //O metodo calcula a idade do cliente para retornar no JSON porém não salva no banco.
+    @Transient
     public int getIdade() {
-        return idade;
+        return Period.between(this.dataNascimento, LocalDate.now()).getYears();
     }
 
-    public void setIdade(int idade) {
-        this.idade = idade;
-    }
-
-    public int getDdd() {
-        return ddd;
-    }
-
-    public void setDdd(int ddd) {
-        this.ddd = ddd;
-    }
-
-    public int getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(int telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getSexo() {
-        return sexo;
-    }
-
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
-    }
-
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
 }

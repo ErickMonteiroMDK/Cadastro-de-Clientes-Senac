@@ -2,97 +2,67 @@ package com.senac.CadastroClienteSenac.Entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
-@Entity
+@Data
+@Builder(toBuilder = true)
+@Entity(name = "endereco")
 public class Endereco {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Logradouro é obrigatório")
+    @Length(max = 100, message = "Logradouro deve ter no máximo 100 caracteres")
+    @Column(nullable = false, length = 100)
     private String logradouro;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Bairro é obrigatório")
+    @Length(max = 50, message = "Bairro deve ter no máximo 50 caracteres")
+    @Column(nullable = false, length = 50)
     private String bairro;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Número é obrigatório")
+    @Length(max = 10, message = "Número deve ter no máximo 10 caracteres")
+    @Column(nullable = false, length = 10)
     private String numero;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Cidade é obrigatório")
+    @Length(max = 50, message = "Cidade deve ter no máximo 50 caracteres")
+    @Column(nullable = false, length = 50)
     private String cidade;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Estado é obrigatório")
+    @Length(min = 2, max = 2, message = "Estado deve ter exatamente 2 caracteres")
+    @Column(nullable = false, length = 2)
     private String estado;
 
+    @NotNull(message = "CEP é obrigatório")
+    @Digits(integer = 8, fraction = 0, message = "CEP deve conter apenas números com 8 dígitos")
+    @Column(nullable = false, length = 8)
+    private Integer cep;
 
-    private int cep;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
+    @NotNull(message = "Cliente é obrigatório")
     private Cliente cliente;
 
-    public String getLogradouro() {
-        return logradouro;
-    }
-
-    public void setLogradouro(String logradouro) {
+    @Builder
+    public Endereco(String logradouro, String bairro, String numero,
+                    String cidade, String estado, Integer cep, Cliente cliente) {
         this.logradouro = logradouro;
-    }
-
-    public String getBairro() {
-        return bairro;
-    }
-
-    public void setBairro(String bairro) {
         this.bairro = bairro;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public void setNumero(String numero) {
         this.numero = numero;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(String cidade) {
         this.cidade = cidade;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
         this.estado = estado;
-    }
-
-    public int getCep() {
-        return cep;
-    }
-
-    public void setCep(int cep) {
         this.cep = cep;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
+
 }

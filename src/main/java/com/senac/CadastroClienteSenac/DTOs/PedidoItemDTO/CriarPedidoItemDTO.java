@@ -14,5 +14,6 @@ public class CriarPedidoItemDTO {
 
     @NotNull(message = "Quantidade é obrigatória")
     @Positive(message = "Quantidade deve ser positiva")
-    private Double quantidade;
+    private Integer quantidade;
+
 }

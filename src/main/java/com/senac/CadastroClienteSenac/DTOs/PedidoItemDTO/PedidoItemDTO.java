@@ -1,14 +1,19 @@
 package com.senac.CadastroClienteSenac.DTOs.PedidoItemDTO;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+
 
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class PedidoItemDTO {
 
     private Long id;
-    private Double quantidade;
+    private Integer quantidade;
     private Double valorUnitario;
     private Long produtoId;
-}
+} 

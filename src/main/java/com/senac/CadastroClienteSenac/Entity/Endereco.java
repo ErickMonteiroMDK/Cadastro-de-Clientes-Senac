@@ -1,6 +1,7 @@
 package com.senac.CadastroClienteSenac.Entity;
 
 
+import com.senac.CadastroClienteSenac.Enum.Estados;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -38,10 +39,10 @@ public class Endereco {
     @Column(nullable = false, length = 50)
     private String cidade;
 
-    @NotBlank(message = "Estado é obrigatório")
-    @Length(min = 2, max = 2, message = "Estado deve ter exatamente 2 caracteres")
+    @NotNull(message = "Estado é obrigatório")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 2)
-    private String estado;
+    private Estados estado;
 
     @NotNull(message = "CEP é obrigatório")
     @Digits(integer = 8, fraction = 0, message = "CEP deve conter apenas números com 8 dígitos")
@@ -55,7 +56,7 @@ public class Endereco {
 
     @Builder
     public Endereco(String logradouro, String bairro, String numero,
-                    String cidade, String estado, Integer cep, Cliente cliente) {
+                    String cidade, Estados estado, Integer cep, Cliente cliente) {
         this.logradouro = logradouro;
         this.bairro = bairro;
         this.numero = numero;

@@ -3,6 +3,7 @@ package com.senac.CadastroClienteSenac.Service;
 import com.senac.CadastroClienteSenac.DTOs.EnderecoDTO.EnderecoDTO;
 import com.senac.CadastroClienteSenac.Entity.Cliente;
 import com.senac.CadastroClienteSenac.Entity.Endereco;
+import com.senac.CadastroClienteSenac.Enum.Estados;
 import com.senac.CadastroClienteSenac.Exeception.EnderecoException;
 import com.senac.CadastroClienteSenac.Repository.ClienteRepository;
 import com.senac.CadastroClienteSenac.Repository.EnderecoRepository;
@@ -13,20 +14,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @Service
 public class EnderecoService {
 
-
     private static final int LIMITE_ENDERECOS = 3;
+
     private final EnderecoRepository enderecoRepository;
+
     private final ClienteRepository clienteRepository;
+
 
     @Autowired
     public EnderecoService(EnderecoRepository enderecoRepository, ClienteRepository clienteRepository) {
         this.enderecoRepository = enderecoRepository;
         this.clienteRepository = clienteRepository;
     }
-
 
     public List<EnderecoDTO> listarTodos() {
         return enderecoRepository.findAll()
@@ -35,8 +38,12 @@ public class EnderecoService {
                 .collect(Collectors.toList());
     }
 
+
+
     public List<EnderecoDTO> listarPorCliente(Long idCliente) {
+
         validarExistenciaCliente(idCliente);
+
         return enderecoRepository.findByClienteId(idCliente)
                 .stream()
                 .map(this::converterParaDTO)
@@ -45,6 +52,7 @@ public class EnderecoService {
 
     @Transactional
     public EnderecoDTO criar(EnderecoDTO enderecoDTO) {
+
         validarLimiteEnderecos(enderecoDTO.getClienteId());
 
         Cliente cliente = buscarCliente(enderecoDTO.getClienteId());
@@ -53,16 +61,18 @@ public class EnderecoService {
         return converterParaDTO(enderecoRepository.save(endereco));
     }
 
+
     @Transactional
     public EnderecoDTO atualizar(Long id, EnderecoDTO enderecoDTO) {
+
         Endereco enderecoExistente = buscarEnderecoPorId(id);
-
         validarClienteEndereco(enderecoExistente.getCliente().getId(), enderecoDTO.getClienteId());
-
         atualizarDadosEndereco(enderecoExistente, enderecoDTO);
 
         return converterParaDTO(enderecoRepository.save(enderecoExistente));
     }
+
+
 
     @Transactional
     public void excluir(Long id) {
@@ -72,11 +82,20 @@ public class EnderecoService {
         enderecoRepository.deleteById(id);
     }
 
+    public Endereco buscarEnderecoPorId(Long id) { // Alterado para public
+        return enderecoRepository.findById(id)
+                .orElseThrow(() -> new EnderecoException("Endereço não encontrado."));
+    }
+
+
+
     private void validarExistenciaCliente(Long clienteId) {
         if (!clienteRepository.existsById(clienteId)) {
             throw new EnderecoException("Cliente não encontrado.");
         }
     }
+
+
 
     private void validarLimiteEnderecos(Long clienteId) {
         if (enderecoRepository.findByClienteId(clienteId).size() >= LIMITE_ENDERECOS) {
@@ -84,15 +103,14 @@ public class EnderecoService {
         }
     }
 
+
+
     private Cliente buscarCliente(Long clienteId) {
         return clienteRepository.findById(clienteId)
                 .orElseThrow(() -> new EnderecoException("Cliente não encontrado."));
     }
 
-    private Endereco buscarEnderecoPorId(Long id) {
-        return enderecoRepository.findById(id)
-                .orElseThrow(() -> new EnderecoException("Endereço não encontrado."));
-    }
+
 
     private void validarClienteEndereco(Long clienteAtual, Long clienteNovo) {
         if (!clienteAtual.equals(clienteNovo)) {
@@ -100,16 +118,29 @@ public class EnderecoService {
         }
     }
 
+
+
     private void atualizarDadosEndereco(Endereco endereco, EnderecoDTO dto) {
+
         Optional.ofNullable(dto.getLogradouro()).ifPresent(endereco::setLogradouro);
         Optional.ofNullable(dto.getBairro()).ifPresent(endereco::setBairro);
         Optional.ofNullable(dto.getNumero()).ifPresent(endereco::setNumero);
         Optional.ofNullable(dto.getCidade()).ifPresent(endereco::setCidade);
-        Optional.ofNullable(dto.getEstado()).ifPresent(endereco::setEstado);
+        Optional.ofNullable(dto.getEstado())
+                .ifPresent(estadoStr -> {
+                    try {
+                        endereco.setEstado(Estados.valueOf(estadoStr));
+                    } catch (IllegalArgumentException e) {
+                        throw new IllegalArgumentException("Estado inválido: " + estadoStr);
+                    }
+                });
+
         Optional.ofNullable(dto.getCep())
                 .map(Integer::parseInt)
                 .ifPresent(endereco::setCep);
     }
+
+
 
     private EnderecoDTO converterParaDTO(Endereco endereco) {
         return EnderecoDTO.builder()
@@ -118,7 +149,7 @@ public class EnderecoService {
                 .bairro(endereco.getBairro())
                 .numero(endereco.getNumero())
                 .cidade(endereco.getCidade())
-                .estado(endereco.getEstado())
+                .estado(endereco.getEstado().name())
                 .cep(String.valueOf(endereco.getCep()))
                 .clienteId(endereco.getCliente().getId())
                 .build();
@@ -130,7 +161,7 @@ public class EnderecoService {
                 .bairro(dto.getBairro())
                 .numero(dto.getNumero())
                 .cidade(dto.getCidade())
-                .estado(dto.getEstado())
+                .estado(Estados.valueOf(dto.getEstado()))
                 .cep(Integer.parseInt(dto.getCep()))
                 .cliente(cliente)
                 .build();

@@ -8,7 +8,6 @@ import com.senac.CadastroClienteSenac.Entity.Cliente;
 import com.senac.CadastroClienteSenac.Service.ClienteService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,7 +46,7 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteResponseDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
